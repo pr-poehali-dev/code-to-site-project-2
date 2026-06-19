@@ -4,35 +4,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 36 56% 96%;
+    --foreground: 25 35% 25%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 60% 99%;
+    --card-foreground: 25 35% 25%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 60% 99%;
+    --popover-foreground: 25 35% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 18 65% 62%;
+    --primary-foreground: 40 60% 99%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 150 30% 75%;
+    --secondary-foreground: 150 35% 22%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 36 40% 92%;
+    --muted-foreground: 28 20% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 340 60% 86%;
+    --accent-foreground: 340 40% 32%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 65%;
+    --destructive-foreground: 40 60% 99%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 33 38% 86%;
+    --input: 33 38% 86%;
+    --ring: 18 65% 62%;
 
-    --radius: 0.5rem;
+    --radius: 1.25rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -97,5 +97,35 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: "Nunito", sans-serif;
+    background-image: radial-gradient(
+      hsl(33 38% 88% / 0.6) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: "Comfortaa", cursive;
+  }
+
+  .font-hand {
+    font-family: "Caveat", cursive;
+  }
+}
+
+@layer utilities {
+  .cozy-shadow {
+    box-shadow: 0 8px 30px -10px hsl(18 60% 60% / 0.25);
+  }
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px -10px hsl(18 60% 60% / 0.35);
   }
 }
