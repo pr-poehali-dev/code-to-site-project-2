@@ -174,7 +174,7 @@ const Index = () => {
     <div style={styles.body}>
       <div style={styles.container}>
         <h1 style={styles.h1}>🏡 Семейный бюджет</h1>
-        <div style={styles.subtitle}>Вика и Серёжа — финансовая система на доверии и правилах</div>
+        <div style={styles.subtitle}>Вика и Серёжа - финансовая система на доверии и правилах</div>
 
         {/* Правила */}
         <div style={styles.card}>
