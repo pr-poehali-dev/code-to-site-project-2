@@ -1,4 +1,5 @@
-import { monthKey, loadData, ru, Income, CATEGORIES, TOTAL_FIXED, inputStyle, selectStyle, btnPrimary } from './CurrentMonth';
+import { monthKey, loadData, ru, Income, inputStyle, selectStyle, btnPrimary } from './CurrentMonth';
+import { loadCategories, totalBudget as calcTotal } from '../utils/categories';
 
 const CARD_BG = 'rgba(255,255,255,0.9)';
 const BORDER = '#f5e6dc';
@@ -20,6 +21,8 @@ export default function NextMonth() {
 
   const vikaTotal = incomes.filter(i => i.who === 'Вика').reduce((a, i) => a + i.amount, 0);
   const sergeyTotal = incomes.filter(i => i.who === 'Серёжа').reduce((a, i) => a + i.amount, 0);
+  const categories = loadCategories();
+  const TOTAL_FIXED = calcTotal(categories);
   const surplus = totalBudget - TOTAL_FIXED;
 
   return (
@@ -89,7 +92,7 @@ export default function NextMonth() {
               <div>
                 <div style={{ fontWeight: 700, color: TEXT, marginBottom: 10 }}>Распределение излишка ({ru(surplus)} ₽)</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
-                  {CATEGORIES.filter(c => c.budget === 0).map(c => (
+                  {categories.filter(c => c.budget === 0).map(c => (
                     <div key={c.key} style={{ background: '#fef9f5', borderRadius: 16, padding: '12px 14px', border: `1px solid ${BORDER}` }}>
                       <div>{c.emoji}</div>
                       <div style={{ fontSize: '0.85rem', color: TEXT2, marginTop: 2 }}>{c.name}</div>
@@ -122,7 +125,7 @@ export default function NextMonth() {
       <div style={{ background: CARD_BG, borderRadius: 24, padding: 24, border: `1px solid ${BORDER}`, boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
         <div style={{ fontSize: '1.1rem', fontWeight: 700, color: TEXT, marginBottom: 16 }}>📊 Плановые категории</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
-          {CATEGORIES.filter(c => c.budget > 0).map(c => (
+          {categories.filter(c => c.budget > 0).map(c => (
             <div key={c.key} style={{ background: '#fef9f5', padding: '12px 14px', borderRadius: 16, border: `1px solid ${BORDER}` }}>
               <div style={{ fontSize: '1.1rem' }}>{c.emoji}</div>
               <div style={{ fontSize: '0.82rem', color: TEXT2, marginTop: 2 }}>{c.name}</div>

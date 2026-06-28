@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { loadData, ru, CATEGORIES } from './CurrentMonth';
+import { loadData, ru } from './CurrentMonth';
+import { loadCategories } from '../utils/categories';
 
 const CARD_BG = 'rgba(255,255,255,0.9)';
 const BORDER = '#f5e6dc';
@@ -46,7 +47,7 @@ function getAllMonths(): MonthData[] {
   return months.reverse(); // сначала новые
 }
 
-const cat = (key: string) => CATEGORIES.find(c => c.key === key);
+const cat = (key: string) => loadCategories().find(c => c.key === key);
 
 export default function History() {
   const months = getAllMonths();
