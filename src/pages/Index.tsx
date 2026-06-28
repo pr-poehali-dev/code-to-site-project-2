@@ -1,4 +1,5 @@
 import { useState, CSSProperties } from 'react';
+import CurrentMonth from './CurrentMonth';
 
 const s: Record<string, CSSProperties> = {
   body: {
@@ -284,6 +285,18 @@ const Index = () => {
       {/* Контент */}
       <div style={s.container}>
 
+        {/* Вкладка: Текущий месяц */}
+        {activeTab === 1 && <CurrentMonth />}
+
+        {/* Остальные вкладки — пока заглушки */}
+        {activeTab === 2 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>📆 Раздел «Следующий месяц» — скоро</div>}
+        {activeTab === 3 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>📜 Раздел «История» — скоро</div>}
+        {activeTab === 4 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>💰 Раздел «Накопления» — скоро</div>}
+        {activeTab === 5 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>⚙️ Раздел «Настройки» — скоро</div>}
+
+        {/* Главная (вкладка 0) */}
+        {activeTab === 0 && <>
+
         {/* Правила */}
         <div style={s.card}>
           <div style={s.sectionTitle}>📜 Восемь железных правил</div>
@@ -442,6 +455,8 @@ const Index = () => {
         <div style={{ ...s.card, textAlign: 'center' }}>
           <p style={{ color: '#7b6b5e' }}>🏡 Всё учтено. Двигаемся по плану, без долгов и с уважением к общим целям.</p>
         </div>
+
+        </>}
       </div>
     </div>
   );
