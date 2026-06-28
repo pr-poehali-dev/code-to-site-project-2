@@ -4,6 +4,7 @@ import NextMonth from './NextMonth';
 import History from './History';
 import Savings from './Savings';
 import PinLock, { PasswordSettings } from '../components/PinLock';
+import CategorySettings from '../components/CategorySettings';
 
 const s: Record<string, CSSProperties> = {
   body: {
@@ -298,9 +299,14 @@ const Index = () => {
         {activeTab === 4 && <PinLock locked={true}><Savings /></PinLock>}
         {activeTab === 5 && (
           <PinLock locked={true}>
-            <div style={s.card}>
-              <div style={s.sectionTitle}>⚙️ Настройки</div>
-              <PasswordSettings />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={s.card}>
+                <div style={s.sectionTitle}>⚙️ Настройки</div>
+                <CategorySettings />
+              </div>
+              <div style={s.card}>
+                <PasswordSettings />
+              </div>
             </div>
           </PinLock>
         )}

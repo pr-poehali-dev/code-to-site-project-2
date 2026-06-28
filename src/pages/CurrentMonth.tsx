@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { loadSavings, saveSavings, distribute, distributeRemainder, applyDistribution, subtractFromSavings, Distribution, SAVINGS_GOAL } from '../utils/savings';
+import { loadCategories, totalBudget, Category } from '../utils/categories';
 
 const ACCENT = '#e07a5f';
 const ACCENT_LIGHT = '#fef0e7';
@@ -12,22 +13,9 @@ const GREEN_LIGHT = '#eaf5ee';
 const BLUE = '#4a7fa5';
 const BLUE_LIGHT = '#eaf3fb';
 
-// Только «живые» категории трат (без накоплений и резерва)
-export const CATEGORIES = [
-  { key: 'rent',   name: 'Аренда',                budget: 30000, emoji: '🏠' },
-  { key: 'credit', name: 'Кредиты',               budget: 30000, emoji: '💳' },
-  { key: 'food',   name: 'Продукты',              budget: 25000, emoji: '🛒' },
-  { key: 'fun',    name: 'Радости и развлечения', budget: 20000, emoji: '🎉' },
-  { key: 'trans',  name: 'Транспорт',             budget: 8000,  emoji: '🚗' },
-  { key: 'pets',   name: 'Животные',              budget: 5000,  emoji: '🐱' },
-  { key: 'beauty', name: 'Красота/здоровье',      budget: 5000,  emoji: '💆' },
-  { key: 'comm',   name: 'Связь',                 budget: 3500,  emoji: '📱' },
-  { key: 'chem',   name: 'Бытовая химия',         budget: 1500,  emoji: '🧴' },
-  { key: 'sergey', name: 'Личные Серёжи',         budget: 15000, emoji: '🎧' },
-  { key: 'vika',   name: 'Личные Вики',           budget: 15000, emoji: '🧑‍💻' },
-];
-
-export const TOTAL_FIXED = CATEGORIES.reduce((a, c) => a + c.budget, 0);
+// Категории читаются динамически из localStorage
+export { loadCategories as getCategories };
+export type { Category };
 
 export type Income = { id: string; who: string; amount: number; comment: string; date: string };
 type Expense = { id: string; category: string; amount: number; comment: string; date: string };
@@ -53,15 +41,26 @@ export default function CurrentMonth() {
   const mk  = monthKey(0);
   const pmk = monthKey(-1);
 
+  const [categories, setCategories] = useState(() => loadCategories());
+
+  // Перечитываем категории при фокусе (если их изменили в настройках)
+  useEffect(() => {
+    const onFocus = () => setCategories(loadCategories());
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
+
+  const TOTAL_FIXED = totalBudget(categories);
+
   const [expenses, setExpenses]         = useState<Expense[]>(() => loadData(mk + '_exp', []));
   const [incomes,  setIncomes]          = useState<Income[]>(() => loadData(mk + '_inc', []));
   const [savEntries, setSavEntries]     = useState<SavingsEntry[]>(() => loadData(mk + '_sav', []));
 
   const prevIncomes: Income[] = loadData(pmk + '_inc', []);
-  const totalBudget = prevIncomes.reduce((a, i) => a + i.amount, 0);
+  const monthBudget = prevIncomes.reduce((a, i) => a + i.amount, 0);
 
   // формы
-  const [expCat,   setExpCat]   = useState(CATEGORIES[0].key);
+  const [expCat,   setExpCat]   = useState(() => loadCategories()[0]?.key ?? '');
   const [expAmt,   setExpAmt]   = useState('');
   const [expNote,  setExpNote]  = useState('');
   const [incWho,   setIncWho]   = useState('Вика');
@@ -82,7 +81,7 @@ export default function CurrentMonth() {
   for (const e of expenses) spent[e.category] = (spent[e.category] || 0) + e.amount;
 
   const totalSpent      = expenses.reduce((a, e) => a + e.amount, 0);
-  const totalLeft       = totalBudget - totalSpent;
+  const totalLeft       = monthBudget - totalSpent;
   const totalNextIncome = incomes.reduce((a, i) => a + i.amount, 0);
 
   const totalSaved    = savEntries.reduce((a, s) => a + s.amount, 0);
@@ -140,7 +139,7 @@ export default function CurrentMonth() {
     }
   };
 
-  const cat = (key: string) => CATEGORIES.find(c => c.key === key);
+  const cat = (key: string) => categories.find(c => c.key === key);
   const monthName = new Date().toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
 
   return (
@@ -153,7 +152,7 @@ export default function CurrentMonth() {
       {/* ── ОБЩИЙ ОСТАТОК ── */}
       <div style={card}>
         <div style={title}>💼 Общий остаток</div>
-        {totalBudget === 0 ? (
+        {monthBudget === 0 ? (
           <div style={{ color: TEXT2, fontSize: '0.95rem', lineHeight: 1.7 }}>
             Бюджет этого месяца формируется из доходов прошлого месяца.<br />
             В прошлом месяце доходов не было — бюджет 0 ₽.<br />
@@ -162,13 +161,13 @@ export default function CurrentMonth() {
         ) : (
           <>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-              <StatBox label="Бюджет месяца" value={`${ru(totalBudget)} ₽`} color={TEXT} />
+              <StatBox label="Бюджет месяца" value={`${ru(monthBudget)} ₽`} color={TEXT} />
               <StatBox label="Потрачено" value={`${ru(totalSpent)} ₽`} color={ACCENT} />
               <StatBox label="Остаток" value={`${ru(totalLeft)} ₽`} color={totalLeft >= 0 ? GREEN : '#c0392b'} />
               {totalSaved > 0 && <StatBox label="В заначку" value={`${ru(totalSaved)} ₽`} color={BLUE} />}
             </div>
             <div style={{ marginTop: 14, height: 10, background: '#f5e6dc', borderRadius: 8, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${Math.min((totalSpent / totalBudget) * 100, 100)}%`, background: totalLeft < 0 ? '#c0392b' : `linear-gradient(90deg,${ACCENT},#f2a65a)`, borderRadius: 8, transition: 'width 0.4s' }} />
+              <div style={{ height: '100%', width: `${Math.min((totalSpent / monthBudget) * 100, 100)}%`, background: totalLeft < 0 ? '#c0392b' : `linear-gradient(90deg,${ACCENT},#f2a65a)`, borderRadius: 8, transition: 'width 0.4s' }} />
             </div>
           </>
         )}
@@ -179,7 +178,7 @@ export default function CurrentMonth() {
         <div style={title}>📤 Внести расход</div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
           <select value={expCat} onChange={e => setExpCat(e.target.value)} style={selectStyle}>
-            {CATEGORIES.map(c => (
+            {categories.map(c => (
               <option key={c.key} value={c.key}>{c.emoji} {c.name} (лимит {ru(c.budget)} ₽)</option>
             ))}
           </select>
@@ -191,7 +190,7 @@ export default function CurrentMonth() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', gap: 10, marginBottom: 20 }}>
-          {CATEGORIES.map(c => {
+          {categories.map(c => {
             const spentAmt = spent[c.key] || 0;
             const left = c.budget - spentAmt;
             const pct  = Math.min((spentAmt / c.budget) * 100, 100);
@@ -329,7 +328,7 @@ export default function CurrentMonth() {
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 14 }}>
               <MiniStat label="Итого внесено" val={`${ru(totalNextIncome)} ₽`} bg={GREEN_LIGHT} color={GREEN} />
               <MiniStat
-                label="Покрытие базы (158к)"
+                label={`Покрытие базы (${ru(TOTAL_FIXED)}к)`}
                 val={totalNextIncome >= TOTAL_FIXED ? '✅ Покрыта' : `−${ru(TOTAL_FIXED - totalNextIncome)} ₽`}
                 bg="#fef9f5" color={totalNextIncome >= TOTAL_FIXED ? GREEN : ACCENT}
               />

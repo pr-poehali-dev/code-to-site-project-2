@@ -37,3 +37,13 @@ export function saveCategories(cats: Category[]) {
 export function totalBudget(cats: Category[]) {
   return cats.reduce((a, c) => a + c.budget, 0);
 }
+
+export function resetCategories() {
+  try { localStorage.removeItem('budget_categories'); } catch (_) { /* ignore */ }
+}
+
+export const EMOJI_OPTIONS = [
+  '🏠','💳','🛒','🎉','🚗','🐱','💆','📱','🧴','🎧','🧑‍💻',
+  '🍕','☕','🏋️','💊','✈️','🎮','📚','🐶','🌿','💇','🧹',
+  '🎁','🏥','🚿','💡','🔧','🎓','🛍️','🍷','🌍','🎵',
+];
