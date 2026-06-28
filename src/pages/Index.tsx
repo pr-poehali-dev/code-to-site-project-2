@@ -3,6 +3,7 @@ import CurrentMonth from './CurrentMonth';
 import NextMonth from './NextMonth';
 import History from './History';
 import Savings from './Savings';
+import PinLock, { PasswordSettings } from '../components/PinLock';
 
 const s: Record<string, CSSProperties> = {
   body: {
@@ -289,13 +290,20 @@ const Index = () => {
       <div style={s.container}>
 
         {/* Вкладка: Текущий месяц */}
-        {activeTab === 1 && <CurrentMonth />}
+        {activeTab === 1 && <PinLock locked={true}><CurrentMonth /></PinLock>}
 
-        {/* Остальные вкладки — пока заглушки */}
-        {activeTab === 2 && <NextMonth />}
-        {activeTab === 3 && <History />}
-        {activeTab === 4 && <Savings />}
-        {activeTab === 5 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>⚙️ Раздел «Настройки» — скоро</div>}
+        {/* Остальные вкладки */}
+        {activeTab === 2 && <PinLock locked={true}><NextMonth /></PinLock>}
+        {activeTab === 3 && <PinLock locked={true}><History /></PinLock>}
+        {activeTab === 4 && <PinLock locked={true}><Savings /></PinLock>}
+        {activeTab === 5 && (
+          <PinLock locked={true}>
+            <div style={s.card}>
+              <div style={s.sectionTitle}>⚙️ Настройки</div>
+              <PasswordSettings />
+            </div>
+          </PinLock>
+        )}
 
         {/* Главная (вкладка 0) */}
         {activeTab === 0 && <>
