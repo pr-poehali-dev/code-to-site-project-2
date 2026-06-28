@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { loadSavings, saveSavings, PILLOW_TARGET, HOUSE_TARGET, ru } from '../utils/savings';
+import { loadSavings, saveSavings, PILLOW_TARGET, HOUSE_TARGET } from '../utils/savings';
+import { ru } from './CurrentMonth';
 
 const CARD_BG = 'rgba(255,255,255,0.9)';
 const BORDER = '#f5e6dc';
