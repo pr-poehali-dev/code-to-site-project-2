@@ -1,6 +1,7 @@
 import { useState, CSSProperties } from 'react';
 import CurrentMonth from './CurrentMonth';
 import NextMonth from './NextMonth';
+import History from './History';
 
 const s: Record<string, CSSProperties> = {
   body: {
@@ -291,7 +292,7 @@ const Index = () => {
 
         {/* Остальные вкладки — пока заглушки */}
         {activeTab === 2 && <NextMonth />}
-        {activeTab === 3 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>📜 Раздел «История» — скоро</div>}
+        {activeTab === 3 && <History />}
         {activeTab === 4 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>💰 Раздел «Накопления» — скоро</div>}
         {activeTab === 5 && <div style={{ ...s.card, color: '#7b6b5e', textAlign: 'center', padding: 40 }}>⚙️ Раздел «Настройки» — скоро</div>}
 
